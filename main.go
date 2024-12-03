@@ -1,7 +1,8 @@
-package main
+package provisioncrawler
 
 import (
 	"archive/zip"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -9,12 +10,6 @@ import (
 	"regexp"
 	"strings"
 )
-
-func printArray(arr []string) {
-	for i := 0; i < len(arr); i++ {
-		fmt.Println(arr[i])
-	}
-}
 
 func readDocx(s string) (string, error) {
 	r, err := zip.OpenReader(s)
@@ -72,28 +67,58 @@ func walk(d string) []File {
 	return files
 }
 
-func GetProvisons(dir string) [][]string {
+func IsMoreTimesIn(str string, substr string, substrtwo string) bool {
+	return strings.Count(str, substr) > strings.Count(str, substrtwo)
+}
+
+func initRozh(file File) (Rozh, error) {
+	text, err := readDocx(filepath.Join(file.Path, file.File.Name()))
+	if err != nil {
+		return Rozh{}, err
+	}
+	inf, _ := file.File.Info()
+	animals := Animals{
+		Kone:     strings.Contains(text, "kůň") || strings.Contains(text, "koně") || strings.Contains(text, "klisna"),
+		OvceKozy: strings.Contains(text, "ovce") || strings.Contains(text, "kozy"),
+		Prasata:  strings.Contains(text, "prase") || strings.Contains(text, "prasečí") || strings.Contains(text, "prasat"),
+		Turi:     strings.Contains(text, "tur") || strings.Contains(text, "tura") || strings.Contains(text, "turů"),
+	}
+	return Rozh{
+		Name:        file.File.Name(),
+		Path:        file.Path,
+		Date:        inf.ModTime(),
+		Provistions: extractExpressions(text),
+		Rozhodnuti:  IsMoreTimesIn(text, "R O Z H O D N U T I", "P R I K A Z"),
+		Male:        IsMoreTimesIn(text, "obviněný", "obviněná"),
+		Podnikatel:  IsMoreTimesIn(text, "IČ", "RČ"),
+		Animals:     animals,
+	}, nil
+}
+
+func GetRozhs(dir string) []Rozh {
 	files := walk(dir)
-	var provs [][]string
+
+	var rozhs []Rozh
+
 	for _, file := range files {
 		if !strings.HasSuffix(file.File.Name(), ".docx") {
 			continue
 		}
-		text, err := readDocx(filepath.Join(file.Path, file.File.Name()))
+		rozh, err := initRozh(file)
 		if err != nil {
-			panic(err)
+			continue
 		}
-		provs = append(provs, extractExpressions(text))
+		rozhs = append(rozhs, rozh)
+
 	}
-	return provs
+	return rozhs
 }
 
-func main() {
-	var input string
-	fmt.Println("Enter the path to the directory with the files:")
-	fmt.Scanln(&input)
-	provs := GetProvisons(input)
-	for _, prov := range provs {
-		printArray(prov)
+func WriteToJson(path string) {
+	rozhs := GetRozhs(path)
+	o, err := json.Marshal(rozhs)
+	if err != nil {
+		panic(err)
 	}
+	os.WriteFile("output.json", o, 0644)
 }

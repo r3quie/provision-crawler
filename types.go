@@ -1,4 +1,4 @@
-package main
+package provisioncrawler
 
 import (
 	"io/fs"
