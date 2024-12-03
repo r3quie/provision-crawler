@@ -24,7 +24,7 @@ func readDocx(s string) (string, error) {
 			return "", fmt.Errorf("readDocx: error in os.Stat while opening %s: %s", s, er.Error())
 		}
 		if inf.Size() == 0 {
-			return "", fmt.Errorf("readDocx: 0 size file")
+			return "", nil
 		}
 		return "", fmt.Errorf("readDocx: error in zip.OpenReader while opening %s: %s", s, err.Error())
 	}
@@ -81,9 +81,6 @@ func GetProvisons(dir string) [][]string {
 		}
 		text, err := readDocx(filepath.Join(file.Path, file.File.Name()))
 		if err != nil {
-			if err.Error() == "readDocx: 0 size file" {
-				continue
-			}
 			panic(err)
 		}
 		provs = append(provs, extractExpressions(text))
