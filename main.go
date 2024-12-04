@@ -89,7 +89,7 @@ func initRozh(file File) (Rozh, error) {
 		Path:        file.Path,
 		Date:        inf.ModTime(),
 		Provistions: extractExpressions(text),
-		Rozhodnuti:  IsMoreTimesIn(text, "R O Z H O D N U T I", "P R I K A Z"),
+		Rozhodnuti:  IsMoreTimesIn(text, "R O Z H O D N U T Í", "P Ř Í K A Z"),
 		Male:        IsMoreTimesIn(text, "obviněný", "obviněná"),
 		Podnikatel:  IsMoreTimesIn(text, "IČ", "RČ"),
 		Animals:     animals,
