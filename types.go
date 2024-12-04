@@ -20,7 +20,7 @@ type Rozh struct {
 	Podnikatel  bool
 	Male        bool
 	Animals     Animals
-	Provistions []string
+	Provisions []string
 	Rozhodnuti  bool
 }
 
