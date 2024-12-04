@@ -50,7 +50,7 @@ func readDocx(s string) (string, error) {
 }
 
 func extractExpressions(a string) []string {
-	re := regexp.MustCompile(`§\s\d+[a-z]+(\sodst\.\s\d+)?(\spísm\.\s[a-z]\))?(\sbod\s\d+)?`)
+	re := regexp.MustCompile(`§\s?\d+[a-zA-Z]?(\sodst\.\s\d+)?(\spísm\.\s[a-z]\))?(\sbod\s\d+)?(\spodbod\s\d+)?`)
 	return re.FindAllString(a, -1)
 }
 
