@@ -1,4 +1,4 @@
-package cmd
+package crawler
 
 import (
 	"io/fs"

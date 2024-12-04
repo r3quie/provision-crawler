@@ -1,4 +1,4 @@
-package cmd
+package crawler
 
 import (
 	"archive/zip"
@@ -49,8 +49,10 @@ func readDocx(s string) (string, error) {
 	return "", nil
 }
 
+const PROVISION_PATTERN string = `§\s?\d+[a-zA-Z]?(\sodst\.\s\d+)?(\spísm\.\s[a-z]\))?(\sbod\s\d+)?(\spodbod\s\d+)?`
+
 func extractExpressions(a string) []string {
-	re := regexp.MustCompile(`§\s?\d+[a-zA-Z]?(\sodst\.\s\d+)?(\spísm\.\s[a-z]\))?(\sbod\s\d+)?(\spodbod\s\d+)?`)
+	re := regexp.MustCompile(PROVISION_PATTERN)
 	return re.FindAllString(a, -1)
 }
 
