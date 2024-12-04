@@ -1,4 +1,4 @@
-package provisioncrawler
+package cmd
 
 import (
 	"archive/zip"
@@ -50,7 +50,7 @@ func readDocx(s string) (string, error) {
 }
 
 func extractExpressions(a string) []string {
-	re := regexp.MustCompile(`§\s\d+(\sodst\.\s\d+)?(\spísm\.\s[a-z]\))?(\sbod\s\d+)?`)
+	re := regexp.MustCompile(`§\s\d+[a-z]+(\sodst\.\s\d+)?(\spísm\.\s[a-z]\))?(\sbod\s\d+)?`)
 	return re.FindAllString(a, -1)
 }
 
@@ -63,7 +63,6 @@ func walk(d string) []File {
 			continue
 		}
 		files = append(files, File{entry, d})
-		}
 	}
 	return files
 }

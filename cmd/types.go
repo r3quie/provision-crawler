@@ -1,4 +1,4 @@
-package provisioncrawler
+package cmd
 
 import (
 	"io/fs"
