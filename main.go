@@ -60,8 +60,9 @@ func walk(d string) []File {
 	for _, entry := range dir {
 		if entry.IsDir() {
 			files = append(files, walk(d+"/"+entry.Name())...)
-		} else {
-			files = append(files, File{entry, d})
+			continue
+		}
+		files = append(files, File{entry, d})
 		}
 	}
 	return files
